@@ -1,0 +1,38 @@
+body.dark-mode {
+	background-color: #696969;
+	color: #f8f9fa;
+}
+body {
+	background-color: #f0f0d7;
+}
+
+body #navbar {
+	color: #adb5bd; 
+	background-color: #86a788;
+}
+
+body #navbar .nav-link:hover {
+	color: #ffffff; 
+}
+body.dark-mode #navbar {
+	background-color: #343a40;
+	color: #ffffff; 
+}
+
+body.dark-mode #navbar .nav-link {
+	color: #adb5bd; 
+}
+
+body.dark-mode #navbar .nav-link:hover {
+	color: #ffffff; 
+}
+
+body.dark-mode #navbar .btn-outline-primary {
+	color: #ffffff;
+	border-color: #6c757d;
+}
+
+body.dark-mode #navbar .btn-outline-primary:hover {
+	background-color: #6c757d;
+	color: #ffffff;
+}
