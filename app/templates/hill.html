@@ -1,2 +1,188 @@
 {% extends 'layout/base.html' %} {% block content %}
+<style>
+	.matrix-row {
+		display: flex;
+		justify-content: center;
+		margin: 5px 0;
+	}
+	.matrix-cell {
+		width: 50px;
+		height: 50px;
+		text-align: center;
+		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		margin: 0 5px;
+	}
+</style>
+<section>
+	<div class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-5">
+				<div class="card mb-4">
+					<div class="card-body">
+						<div class="mb-3">
+							<label for="ciphertext" class="form-label"
+								>Text</label
+							>
+							<textarea
+								class="form-control"
+								id="ciphertext"
+								rows="3"
+								type="text"
+								placeholder="Enter encrypted text"
+							></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="matrixSize">Matrix Size:</label>
+							<select
+								id="matrixSize"
+								onchange="generateMatrixInput()"
+							>
+								<option value="2">2x2</option>
+								<option value="3">3x3</option>
+							</select>
+							<div id="matrixInput"></div>
+						</div>
+						<div class="mb-4">
+							<label for="order"
+								>Matrix Multiplication Order:</label
+							>
+							<select id="order">
+								<option value="kx">
+									y = kx (Key × Vector)
+								</option>
+								<option value="xk">
+									y = xk (Vector × Key)
+								</option>
+							</select>
+						</div>
+						<div class="row mb-3">
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="encode()"
+								>
+									Encrypt
+								</button>
+							</div>
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="decode()"
+								>
+									Decrypt
+								</button>
+							</div>
+						</div>
+						<p id="result"></p>
+						<p id="error"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	function generateMatrixInput() {
+		const matrixSize = parseInt(
+			document.getElementById("matrixSize").value
+		);
+		const matrixInputDiv = document.getElementById("matrixInput");
+		matrixInputDiv.innerHTML = ""; // Reset nội dung trước đó
+
+		const label = document.createElement("label");
+		label.textContent = `Enter Key Matrix (${matrixSize}x${matrixSize}):`;
+		matrixInputDiv.appendChild(label);
+
+		// Tạo các ô nhập liệu cho ma trận
+		for (let i = 0; i < matrixSize; i++) {
+			const rowDiv = document.createElement("div");
+			rowDiv.classList.add("matrix-row");
+
+			for (let j = 0; j < matrixSize; j++) {
+				const input = document.createElement("input");
+				input.type = "number";
+				input.classList.add("matrix-cell");
+				input.id = `matrix-${i}-${j}`;
+				input.placeholder = "0";
+				rowDiv.appendChild(input);
+			}
+
+			matrixInputDiv.appendChild(rowDiv);
+		}
+	}
+	generateMatrixInput();
+	function parseMatrix(matrixSize) {
+		const matrix = [];
+		for (let i = 0; i < matrixSize; i++) {
+			const row = [];
+			for (let j = 0; j < matrixSize; j++) {
+				const value = document.getElementById(`matrix-${i}-${j}`).value;
+				if (value === "") {
+					throw new Error(
+						`Matrix cell [${i + 1}, ${j + 1}] cannot be empty.`
+					);
+				}
+				row.push(parseInt(value, 10));
+			}
+			matrix.push(row);
+		}
+		return matrix;
+	}
+	async function encode() {
+		const text = document.getElementById("ciphertext").value;
+		const matrixSize = parseInt(
+			document.getElementById("matrixSize").value
+		);
+		const order = document.getElementById("order").value;
+
+		try {
+			const keyMatrix = parseMatrix(matrixSize);
+			const response = await fetch(`/api/hill/encode`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, key_matrix: keyMatrix, order }),
+			});
+
+			const result = await response.json();
+			document.getElementById("result").innerText = result.encoded
+				? `Encoded Text: ${result.encoded}`
+				: `Error: ${result.error}`;
+		} catch (error) {
+			document.getElementById(
+				"result"
+			).innerText = `Error: ${error.message}`;
+		}
+	}
+
+	async function decode() {
+		const text = document.getElementById("ciphertext").value;
+		const matrixSize = parseInt(
+			document.getElementById("matrixSize").value
+		);
+		const order = document.getElementById("order").value;
+
+		try {
+			const keyMatrix = parseMatrix(matrixSize);
+			const response = await fetch(`/api/hill/decode`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, key_matrix: keyMatrix, order }),
+			});
+
+			const result = await response.json();
+			document.getElementById("result").innerText = result.decoded
+				? `Decoded Text: ${result.decoded}`
+				: `Error: ${result.error}`;
+		} catch (error) {
+			document.getElementById(
+				"result"
+			).innerText = `Error: ${error.message}`;
+		}
+	}
+</script>
 {% endblock %}

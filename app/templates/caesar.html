@@ -1,2 +1,101 @@
 {% extends 'layout/base.html' %} {% block content %}
+<section>
+	<div class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-5">
+				<div class="card mb-4">
+					<div class="card-body">
+						<div class="mb-3">
+							<label for="ciphertext" class="form-label"
+								>Text</label
+							>
+							<textarea
+								class="form-control"
+								id="ciphertext"
+								rows="3"
+								type="text"
+								placeholder="Enter encrypted text"
+							></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="shift" class="form-label">Shift</label>
+							<input
+								class="form-control"
+								id="shift"
+								type="number"
+								placeholder="Enter shift"
+							/>
+						</div>
+						<div class="row mb-3">
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="encode()"
+								>
+									Encrypt
+								</button>
+							</div>
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="decode()"
+								>
+									Decrypt
+								</button>
+							</div>
+						</div>
+						<p id="result"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	async function decode() {
+		const text = document.getElementById("ciphertext").value;
+		const shift = parseInt(document.getElementById("shift").value, 10);
+
+		try {
+			const response = await fetch("/api/caesar/decode", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, shift }),
+			});
+
+			const result = await response.json();
+			document.getElementById("result").innerText = result.decoded
+				? `Encoded Text: ${result.decoded}`
+				: `Error: ${result.error}`;
+		} catch (error) {
+			document.getElementById(
+				"result"
+			).innerText = `Error: ${error.message}`;
+		}
+	}
+	async function encode() {
+		const text = document.getElementById("ciphertext").value;
+		const shift = parseInt(document.getElementById("shift").value, 10);
+
+		try {
+			const response = await fetch("/api/caesar/encode", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, shift }),
+			});
+
+			const result = await response.json();
+			document.getElementById("result").innerText = result.encoded
+				? `Encoded Text: ${result.encoded}`
+				: `Error: ${result.error}`;
+		} catch (error) {
+			document.getElementById(
+				"result"
+			).innerText = `Error: ${error.message}`;
+		}
+	}
+</script>
 {% endblock %}

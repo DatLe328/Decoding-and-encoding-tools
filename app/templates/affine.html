@@ -1,2 +1,105 @@
 {% extends 'layout/base.html' %} {% block content %}
+<section>
+	<div class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-5">
+				<div class="card mb-4">
+					<div class="card-body">
+						<div class="mb-3">
+							<label for="ciphertext" class="form-label"
+								>Text</label
+							>
+							<textarea
+								class="form-control"
+								id="ciphertext"
+								rows="3"
+								type="text"
+								placeholder="Enter encrypted text"
+							></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="a_coefficient" class="form-label">A coefficient</label>
+							<input
+								class="form-control"
+								id="a_coefficient"
+								type="number"
+								placeholder="Enter a"
+							/>
+						</div>
+						<div class="mb-3">
+							<label for="b_coefficient" class="form-label">B coefficient</label>
+							<input
+								class="form-control"
+								id="b_coefficient"
+								type="number"
+								placeholder="Enter b"
+							/>
+						</div>
+						<div class="row mb-3">
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="encode()"
+								>
+									Encrypt
+								</button>
+							</div>
+							<div class="text-center col-sm-2">
+								<button
+									type="submit"
+									class="btn btn-success"
+									onclick="decode()"
+								>
+									Decrypt
+								</button>
+							</div>
+						</div>
+						<p id="result"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	async function decode() {
+		const text = document.getElementById("ciphertext").value;
+		const a_coefficient = parseInt(document.getElementById("a_coefficient").value, 10);
+		const b_coefficient = parseInt(document.getElementById("b_coefficient").value, 10);
+		try {
+			const response = await fetch("/api/affine/decode", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, a_coefficient, b_coefficient }),
+			});
+
+			const result = await response.json();
+			document.getElementById("result").innerText = result.decoded
+				? `Encoded Text: ${result.decoded}`
+				: `Error: ${result.error}`;
+		} catch (error) {
+			document.getElementById(
+				"result"
+			).innerText = `Error: ${error.message}`;
+		}
+	}
+	async function encode() {
+		const text = document.getElementById("ciphertext").value;
+		const a_coefficient = parseInt(document.getElementById("a_coefficient").value, 10);
+		const b_coefficient = parseInt(document.getElementById("b_coefficient").value, 10);
+
+		const response = await fetch("/api/affine/encode", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ text, a_coefficient, b_coefficient }),
+		});
+
+		const result = await response.json();
+		if (result.error)
+			document.getElementById("error").textContent = result.error;
+		else document.getElementById("result").textContent = result.encoded;
+	}
+</script>
 {% endblock %}
