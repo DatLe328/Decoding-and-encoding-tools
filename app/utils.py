@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 def extended_gcd(a, b):
@@ -10,7 +11,7 @@ def extended_gcd(a, b):
 
 
 def mod_inverse(a, m):
-    g, x, y = extended_gcd(a, m)
+    g, x, y =extended_gcd(a, m)
     if g != 1:
         return None  
     else:
@@ -26,3 +27,12 @@ def matrix_mod_inverse(matrix, modulus):
 
     adjugate = np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
     return (det_inv * adjugate) % modulus
+
+
+def isprime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True

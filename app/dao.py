@@ -1,6 +1,6 @@
 from math import gcd
 from app import app
-import utils
+import utils, math
 import numpy as np
 
 def caesar_cipher(text, shift, decode=False):
@@ -162,3 +162,26 @@ def hill_cipher_decode(text, key_matrix, order, mod=app.config['ALPHABET_SIZE'])
 
     result = ''.join(chr(int(num) + ord('A')) for row in result_vector for num in row)
     return result
+
+
+def generate_keys(p, q, e):
+    n = p * q
+    phi = (p - 1) * (q - 1)
+
+    if math.gcd(e, phi) != 1:
+        raise ValueError("e phải nguyên tố cùng nhau với φ(n).")
+    d = utils.mod_inverse(e, phi)
+    return {"public": (e, n), "private": (d, n)}
+
+
+def diffie_hellman(p, g, privateKeyA, privateKeyB):
+    publicKeyA = pow(g, privateKeyA, p)
+    publicKeyB = pow(g, privateKeyB, p)
+
+    sharedKeyA = pow(publicKeyB, privateKeyA, p)
+    sharedKeyB = pow(publicKeyA, privateKeyB, p)
+
+    if sharedKeyA != sharedKeyB:
+        raise ValueError("Shared keys do not match!")
+
+    return publicKeyA, publicKeyB, sharedKeyA

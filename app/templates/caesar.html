@@ -2,10 +2,13 @@
 <section>
 	<div class="container py-5">
 		<div class="row justify-content-center">
-			<div class="col-lg-5">
+			<div class="col-lg-6">
 				<div class="card mb-4">
 					<div class="card-body">
 						<div class="mb-3">
+							<h1 class="card-title text-center mb-4">
+								Caesar Cipher Tool
+							</h1>
 							<label for="ciphertext" class="form-label"
 								>Text</label
 							>
@@ -13,40 +16,43 @@
 								class="form-control"
 								id="ciphertext"
 								rows="3"
-								type="text"
-								placeholder="Enter encrypted text"
+								placeholder="Enter text"
 							></textarea>
 						</div>
 						<div class="mb-3">
 							<label for="shift" class="form-label">Shift</label>
 							<input
+								type="number"
 								class="form-control"
 								id="shift"
-								type="number"
-								placeholder="Enter shift"
+								placeholder="Enter shift value"
 							/>
 						</div>
-						<div class="row mb-3">
-							<div class="text-center col-sm-2">
+						<div class="row g-2 mb-3">
+							<div class="col text-center">
 								<button
-									type="submit"
-									class="btn btn-success"
+									type="button"
+									class="btn btn-success btn-custom w-100"
 									onclick="encode()"
 								>
 									Encrypt
 								</button>
 							</div>
-							<div class="text-center col-sm-2">
+							<div class="col text-center">
 								<button
-									type="submit"
-									class="btn btn-success"
+									type="button"
+									class="btn btn-danger btn-custom w-100"
 									onclick="decode()"
 								>
 									Decrypt
 								</button>
 							</div>
 						</div>
-						<p id="result"></p>
+						<h5>Result</h5>
+						<div
+							id="result"
+							class="p-3 border rounded bg-light text-dark"
+						></div>
 					</div>
 				</div>
 			</div>
@@ -54,48 +60,5 @@
 	</div>
 </section>
 
-<script>
-	async function decode() {
-		const text = document.getElementById("ciphertext").value;
-		const shift = parseInt(document.getElementById("shift").value, 10);
-
-		try {
-			const response = await fetch("/api/caesar/decode", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text, shift }),
-			});
-
-			const result = await response.json();
-			document.getElementById("result").innerText = result.decoded
-				? `Encoded Text: ${result.decoded}`
-				: `Error: ${result.error}`;
-		} catch (error) {
-			document.getElementById(
-				"result"
-			).innerText = `Error: ${error.message}`;
-		}
-	}
-	async function encode() {
-		const text = document.getElementById("ciphertext").value;
-		const shift = parseInt(document.getElementById("shift").value, 10);
-
-		try {
-			const response = await fetch("/api/caesar/encode", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text, shift }),
-			});
-
-			const result = await response.json();
-			document.getElementById("result").innerText = result.encoded
-				? `Encoded Text: ${result.encoded}`
-				: `Error: ${result.error}`;
-		} catch (error) {
-			document.getElementById(
-				"result"
-			).innerText = `Error: ${error.message}`;
-		}
-	}
-</script>
+<script src="static\css\js\caesar.js"></script>
 {% endblock %}

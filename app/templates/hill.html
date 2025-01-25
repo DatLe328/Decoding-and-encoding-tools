@@ -14,14 +14,21 @@
 		border-radius: 5px;
 		margin: 0 5px;
 	}
+	#result,
+	#error {
+		white-space: pre-wrap;
+	}
 </style>
 <section>
 	<div class="container py-5">
 		<div class="row justify-content-center">
-			<div class="col-lg-5">
+			<div class="col-lg-6">
 				<div class="card mb-4">
 					<div class="card-body">
 						<div class="mb-3">
+							<h1 class="card-title text-center mb-4">
+								Hill Cipher Tool
+							</h1>
 							<label for="ciphertext" class="form-label"
 								>Text</label
 							>
@@ -34,21 +41,24 @@
 							></textarea>
 						</div>
 						<div class="mb-3">
-							<label for="matrixSize">Matrix Size:</label>
+							<label for="matrixSize" class="form-label"
+								>Matrix Size:</label
+							>
 							<select
+								class="form-select"
 								id="matrixSize"
 								onchange="generateMatrixInput()"
 							>
 								<option value="2">2x2</option>
 								<option value="3">3x3</option>
 							</select>
-							<div id="matrixInput"></div>
+							<div id="matrixInput" class="mt-3"></div>
 						</div>
-						<div class="mb-4">
-							<label for="order"
+						<div class="mb-3">
+							<label for="order" class="form-label"
 								>Matrix Multiplication Order:</label
 							>
-							<select id="order">
+							<select class="form-select" id="order">
 								<option value="kx">
 									y = kx (Key × Vector)
 								</option>
@@ -57,28 +67,31 @@
 								</option>
 							</select>
 						</div>
-						<div class="row mb-3">
-							<div class="text-center col-sm-2">
+						<div class="row g-2 mb-3">
+							<div class="col">
 								<button
-									type="submit"
-									class="btn btn-success"
+									type="button"
+									class="btn btn-success w-100"
 									onclick="encode()"
 								>
 									Encrypt
 								</button>
 							</div>
-							<div class="text-center col-sm-2">
+							<div class="col">
 								<button
-									type="submit"
-									class="btn btn-success"
+									type="button"
+									class="btn btn-danger w-100"
 									onclick="decode()"
 								>
 									Decrypt
 								</button>
 							</div>
 						</div>
-						<p id="result"></p>
-						<p id="error"></p>
+						<h5>Result</h5>
+						<div
+							id="result"
+							class="p-3 border rounded bg-light text-dark"
+						></div>
 					</div>
 				</div>
 			</div>
@@ -86,103 +99,5 @@
 	</div>
 </section>
 
-<script>
-	function generateMatrixInput() {
-		const matrixSize = parseInt(
-			document.getElementById("matrixSize").value
-		);
-		const matrixInputDiv = document.getElementById("matrixInput");
-		matrixInputDiv.innerHTML = ""; // Reset nội dung trước đó
-
-		const label = document.createElement("label");
-		label.textContent = `Enter Key Matrix (${matrixSize}x${matrixSize}):`;
-		matrixInputDiv.appendChild(label);
-
-		// Tạo các ô nhập liệu cho ma trận
-		for (let i = 0; i < matrixSize; i++) {
-			const rowDiv = document.createElement("div");
-			rowDiv.classList.add("matrix-row");
-
-			for (let j = 0; j < matrixSize; j++) {
-				const input = document.createElement("input");
-				input.type = "number";
-				input.classList.add("matrix-cell");
-				input.id = `matrix-${i}-${j}`;
-				input.placeholder = "0";
-				rowDiv.appendChild(input);
-			}
-
-			matrixInputDiv.appendChild(rowDiv);
-		}
-	}
-	generateMatrixInput();
-	function parseMatrix(matrixSize) {
-		const matrix = [];
-		for (let i = 0; i < matrixSize; i++) {
-			const row = [];
-			for (let j = 0; j < matrixSize; j++) {
-				const value = document.getElementById(`matrix-${i}-${j}`).value;
-				if (value === "") {
-					throw new Error(
-						`Matrix cell [${i + 1}, ${j + 1}] cannot be empty.`
-					);
-				}
-				row.push(parseInt(value, 10));
-			}
-			matrix.push(row);
-		}
-		return matrix;
-	}
-	async function encode() {
-		const text = document.getElementById("ciphertext").value;
-		const matrixSize = parseInt(
-			document.getElementById("matrixSize").value
-		);
-		const order = document.getElementById("order").value;
-
-		try {
-			const keyMatrix = parseMatrix(matrixSize);
-			const response = await fetch(`/api/hill/encode`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text, key_matrix: keyMatrix, order }),
-			});
-
-			const result = await response.json();
-			document.getElementById("result").innerText = result.encoded
-				? `Encoded Text: ${result.encoded}`
-				: `Error: ${result.error}`;
-		} catch (error) {
-			document.getElementById(
-				"result"
-			).innerText = `Error: ${error.message}`;
-		}
-	}
-
-	async function decode() {
-		const text = document.getElementById("ciphertext").value;
-		const matrixSize = parseInt(
-			document.getElementById("matrixSize").value
-		);
-		const order = document.getElementById("order").value;
-
-		try {
-			const keyMatrix = parseMatrix(matrixSize);
-			const response = await fetch(`/api/hill/decode`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text, key_matrix: keyMatrix, order }),
-			});
-
-			const result = await response.json();
-			document.getElementById("result").innerText = result.decoded
-				? `Decoded Text: ${result.decoded}`
-				: `Error: ${result.error}`;
-		} catch (error) {
-			document.getElementById(
-				"result"
-			).innerText = `Error: ${error.message}`;
-		}
-	}
-</script>
+<script src="static\css\js\hill.js"></script>
 {% endblock %}
