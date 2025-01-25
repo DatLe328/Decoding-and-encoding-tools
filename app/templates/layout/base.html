@@ -28,22 +28,4 @@
 		</main>
 		{% block footer %} {% include 'layout/footer.html' %} {% endblock %}
 	</body>
-	<script>
-		const button = document.getElementById("toggle-theme");
-		const icon = document.getElementById("theme-icon");
-		const navbar = document.getElementById("navbar");
-
-		button.addEventListener("click", () => {
-			const body = document.body;
-			body.classList.toggle("dark-mode");
-			navbar.classList.toggle("dark-mode")
-
-			// Toggle Navbar Style
-			if (body.classList.contains("dark-mode")) {
-				icon.className = "bi bi-sun-fill"; // Change icon to sun
-			} else {
-				icon.className = "bi bi-moon-fill"; // Change icon to moon
-			}
-		});
-	</script>
 </html>
