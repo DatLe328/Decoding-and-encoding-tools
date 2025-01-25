@@ -1,2 +1,97 @@
 {% extends 'layout/base.html' %} {% block content %}
+<section>
+	<div class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-6">
+				<div class="card mb-4">
+					<div class="card-body">
+						<h1 class="card-title text-center mb-4">
+							RSA Cipher Tool
+						</h1>
+						<div class="mb-3">
+							<label for="ciphertext" class="form-label"
+								>Text</label
+							>
+							<textarea
+								class="form-control"
+								id="ciphertext"
+								rows="3"
+								placeholder="Enter text"
+							></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="p" class="form-label"
+								>Prime Number (p)</label
+							>
+							<input
+								type="number"
+								class="form-control"
+								id="p"
+								placeholder="Enter a prime number"
+							/>
+						</div>
+						<div class="mb-3">
+							<label for="q" class="form-label"
+								>Prime Number (q)</label
+							>
+							<input
+								type="number"
+								class="form-control"
+								id="q"
+								placeholder="Enter another prime number"
+							/>
+						</div>
+						<div class="mb-3">
+							<label for="e" class="form-label"
+								>Public Exponent (e)</label
+							>
+							<input
+								type="number"
+								class="form-control"
+								id="e"
+								placeholder="Enter public exponent (e)"
+							/>
+						</div>
+						<div class="row g-2">
+							<div class="col text-center">
+								<button
+									type="button"
+									class="btn btn-primary btn-custom"
+									onclick="generateKeys()"
+								>
+									Generate Keys
+								</button>
+							</div>
+							<div class="col text-center">
+								<button
+									type="button"
+									class="btn btn-success btn-custom"
+									onclick="encode()"
+								>
+									Encrypt
+								</button>
+							</div>
+							<div class="col text-center">
+								<button
+									type="button"
+									class="btn btn-danger btn-custom"
+									onclick="decode()"
+								>
+									Decrypt
+								</button>
+							</div>
+						</div>
+						<hr class="my-4" />
+						<h5>Generated Keys</h5>
+						<p id="keys" class="text-break"></p>
+						<h5>Result</h5>
+						<p id="result" class="text-break"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script src="\static\css\js\rsa.js"></script>
 {% endblock %}
