@@ -3,7 +3,7 @@ async function calculateKey() {
 	const g = parseInt(document.getElementById("g").value);
 	const privateKeyA = parseInt(document.getElementById("privateKeyA").value);
 	const privateKeyB = parseInt(document.getElementById("privateKeyB").value);
-
+	console.log(p);
 	try {
 		const response = await fetch(`/api/diffie-hellman/exchange`, {
 			method: "POST",
@@ -23,6 +23,7 @@ async function calculateKey() {
             Shared Secret Key: ${result.sharedKey}
           `;
 		}
+		console.log(result)
 	} catch (error) {
 		document.getElementById("result").innerText = `Error: ${error.message}`;
 	}
